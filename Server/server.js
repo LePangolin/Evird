@@ -13,6 +13,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // ROUTES
 app.use("/js", express.static("./public/js"));
+app.use("/css", express.static("./public/style"));
+app.use("/img", express.static("./public/img"));
 app.use("/upload", require("./router/upload_route"));
 app.use("/", require("./router/base_route"));
 

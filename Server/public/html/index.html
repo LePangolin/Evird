@@ -5,15 +5,34 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>Evird</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/index.css" />
   </head>
   <body>
-    <center>
-        <h1>Upload de fichier</h1>
-        <form enctype="multipart/form-data" id="uploadForm">
-            <input type="file" name="fileToUpload" id="fileToUpload" />
-            <button>Submit</button>
-        </form>
-    </center>
+    <div class="row">
+        <div class="col-6 full-screen">
+            <div class="center-title red">
+                <img src="/img/logo.png" alt="logo" class="img" />
+            </div>
+        </div>
+        <div class="col-6 ombre-portee bg-connection">
+            <div class="row">
+                <div class="col-12">
+                    <div>
+                        <h1 class="center-title">Portail de connexion</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top:  0%;">
+                <div class="col-12">
+                    <h2 class="center-title">Connexion</h2>
+                    <input type="text" placeholder="Nom d'utilisateur"  class="input-connection" style="margin-left:  28%;" />
+                    <input type="password" placeholder="Mot de passe" class="input-connection mt-2" style="margin-left:  28%;" />
+                    <div class="center-title" style="margin-top: 0%;">
+                        <button class="btn-connection btn-primary mt-2">Connexion</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
   </body>
 </html>
