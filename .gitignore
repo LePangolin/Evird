@@ -2,4 +2,11 @@ node_modules
 .env
 package-lock.json
 uploads
+android
+ios
+linux
+macos
+test
+web
+windows
 ```
