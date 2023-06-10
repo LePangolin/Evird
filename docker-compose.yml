@@ -1,0 +1,35 @@
+version: '3.1'
+
+services:
+  server:
+    container_name: gateway
+    image: 'node:alpine'
+    working_dir: /app
+    command: "npm run dev"
+    volumes:
+      - ./Server:/app
+    ports:
+      - '3789:3789'
+    env_file:
+      - ./Server/.env
+    depends_on:
+      - user_service
+    networks:
+      - server_network
+    links:
+      - user_service
+  user_service:
+    container_name: user_service
+    image: 'node:alpine'
+    working_dir: /app
+    command: "npm run dev"
+    volumes:
+      - ./UserService:/app
+    env_file:
+      - ./UserService/.env
+    networks:
+      - server_network
+
+networks:
+  server_network:
+    driver: bridge
