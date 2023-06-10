@@ -1,9 +1,80 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('uploadForm');
+document.addEventListener('DOMContentLoaded', async () => {
+
+    
+    let filesResponse = await fetch('/upload');
+    filesResponse = await filesResponse.json();
+    const files = filesResponse.files;
+
+    // affiche un apperçu des fichiers si fichier image
+    const displayFiles = () => {
+        const filesContainer = document.getElementById('filesContainer');
+        // filesContainer.innerHTML = '';
+        console.log(files);
+        files.forEach(async (file) => {
+            let format = file.split('.')[1];
+            if(format == 'png' || format == 'jpg' || format == 'jpeg' || format == 'gif'){
+                console.log("on passe ici");
+                const fileContainer = document.createElement('div');
+                fileContainer.classList.add('card');
+                const filePreviewImg = document.createElement('img');
+                let imgBrut = await fetch(`/upload/${encodeURIComponent(file)}`);
+                imgBrut = await imgBrut.text();
+                filePreviewImg.src = imgBrut;
+                filePreviewImg.alt = file;
+                filePreviewImg.classList.add('card-img');
+                const fileTitle = document.createElement('div');
+                fileTitle.classList.add('card-title');
+                fileTitle.innerHTML = file;
+                fileContainer.appendChild(fileTitle);
+                fileContainer.appendChild(filePreviewImg);
+                filesContainer.appendChild(fileContainer);
+                fileContainer.addEventListener('click', () => {
+                    window.open(`/upload/download/${encodeURIComponent(file)}`);
+                });
+            }else if(format == "zip" || format == "rar" || format == "7z" || format == "tar"){
+                const fileContainer = document.createElement('div');
+                fileContainer.classList.add('card');
+                const filePreviewImg = document.createElement('img');
+                filePreviewImg.src = '/img/zip.png';
+                filePreviewImg.alt = file;
+                filePreviewImg.classList.add('card-img');
+                const fileTitle = document.createElement('div');
+                fileTitle.classList.add('card-title');
+                fileTitle.innerHTML = file;
+                fileContainer.appendChild(fileTitle);
+                fileContainer.appendChild(filePreviewImg);
+                filesContainer.appendChild(fileContainer);
+                fileContainer.addEventListener('click',  () => {
+                    window.open(`/upload/download/${encodeURIComponent(file)}`);
+                });
+            }else if (format == "pdf"){
+                const fileContainer = document.createElement('div');
+                fileContainer.classList.add('card');
+                const filePreviewImg = document.createElement('img');
+                filePreviewImg.src = '/img/pdf.png';
+                filePreviewImg.alt = file;
+                const fileTitle = document.createElement('div');
+                fileTitle.classList.add('card-title');
+                fileTitle.innerHTML = file;
+                filePreviewImg.classList.add('card-img');
+                fileContainer.appendChild(fileTitle);
+                fileContainer.appendChild(filePreviewImg);
+                filesContainer.appendChild(fileContainer);
+                fileContainer.addEventListener('click', () => {
+                    window.open(`/upload/download/${encodeURIComponent(file)}`);
+                });
+            }
+        });
+    }
+
+    displayFiles();
+
+
+    const form = document.getElementById('form');
 
     const sendFile = async () =>{
         
-        const file = document.getElementById('fileToUpload').files;
+        const file = document.getElementById('myFileInput').files;
         
         const formData = new FormData();    
 
@@ -21,8 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log(json);
     }
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        sendFile();
+    document.getElementById('myFileInput').addEventListener('change', (e) => {
+        if(e.target.files.length > 0){
+            sendFile();
+            e.target.files = [];
+        }
     });
 });

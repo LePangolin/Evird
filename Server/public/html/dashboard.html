@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <title>dashboard</title>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <link rel='stylesheet' type='text/css' media='screen' href='/css/index.css'>
+        <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+        <script src="/js/main.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="col-2 full-screen bg-column">
+                <div class="row">
+                    <div class="col-12">
+                        <div>
+                            <img src="/img/logo.png" alt="logo" class="img" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <p class="sub-section-title ml-2">Uploads</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-10">
+                <form enctype="multipart/form-data" id="form">
+                    <label for="myFileInput" class="custom-file-upload"></label>
+                    <input type="file" id="myFileInput">
+                </form>
+                  
+                <div id="filesContainer" class="filesContainer ml-2 ">
+                    <div class="card">
+                        <img src="/img/logo.png" alt="logo" class="card-img" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
