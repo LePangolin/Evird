@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+        "express": "^4.17.1",
+        "express-fileupload": "1.4.0",
+        "nodemon": "^2.0.7"
+    },
+    "scripts": {
+        "dev": "npm install && nodemon --legacy-watch server.js",
+        "start" : "node server.js"
+    }
+}
