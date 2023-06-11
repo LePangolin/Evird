@@ -8,10 +8,14 @@ class AuthProvider extends ChangeNotifier{
   String refreshToken = '';
 
   void makeConnection(String token, String refreshToken) async {
-    this.token = token;
-    this.refreshToken = refreshToken;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('refreshToken', refreshToken);
+    try{
+      this.token = token;
+      this.refreshToken = refreshToken;
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setString('refreshToken', refreshToken);
+    }catch(e){
+      print(e);
+    }
   }
 
 }

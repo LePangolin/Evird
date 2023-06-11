@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:app/helper/api_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:app/provider/auth_provider.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -113,34 +116,27 @@ class _AuthScreenState extends State<AuthScreen> {
               onPressed: () {
                 setState(() {
                   _loading = true;
-                  http.post(Uri.parse('https://8bbe-195-83-211-139.ngrok-free.app/user/login'), body: {
-                    'email': email,
-                    'password': password
-                  }).then((value) {
-                    if(value.statusCode >= 200 && value.statusCode < 300){
+                  ApiHelper.connection(email, password).then((value){
+                    if(value['error']){
+                      setState(() {
+                        _loading = false;
+                      });
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Login successful'),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
+                        SnackBar(
+                          content: Text(value['message']),
+                          backgroundColor: Colors.red,
+                        )
                       );
                     }else{
+                      Provider.of<AuthProvider>(context, listen: false).makeConnection(value['token'], value['refreshToken']);
+                      // Navigator.pushReplacementNamed(context, '/home');
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                          content: Text('Login failed'),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                          behavior: SnackBarBehavior.floating,
-                        ),
+                          content: Text('Login success'),
+                          backgroundColor: Colors.green,
+                        )
                       );
                     }
-                    setState(() {
-                      _loading = false;
-                    });
                   });
                 });
               },
