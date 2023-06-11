@@ -8,25 +8,31 @@ const router = express.Router();
 // ROUTES
 router.post('/signup', async (req, res) => {
     try {
-        const result = await axios.post(process.env.USER_SERVICE_ROUTE + "/user/signup", req.body);
-        if(result) {
-            res.status(result.status).send(result.data);
-        }
+        let result = await axios.post(process.env.USER_SERVICE_ROUTE + "/user/signup", req.body);
+        res.status(result.status).send({
+            code : result.status,
+            message : result.data
+        });
     } catch (error) {
-        console.log(error);
-        return res.status(500).send('User not created');
+        res.status(error.response.status).send({
+            code : error.response.status,
+            message : error.response.data
+        });
     }
 });
 
 router.post('/login', async (req, res) => {
     try {
-        const result = await axios.post(process.env.USER_SERVICE_ROUTE + "/user/login", req.body);
-        if(result) {
-            res.status(result.status).send(result.data);
-        }
+        let result = await axios.post(process.env.USER_SERVICE_ROUTE + "/user/login", req.body);
+        res.status(result.status).send({
+            code : result.status,
+            message : result.data
+        });
     } catch (error) {
-        console.log(error);
-        return res.status(500).send('User not logged in');
+        res.status(error.response.status).send({
+            code : error.response.status,
+            message : error.response.data
+        });
     }
 });
 

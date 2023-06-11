@@ -5,17 +5,19 @@ const bcrypt = require('bcrypt');
 
 
 // INTERACT WITH DATABASE
-async function createUser(email, password) {
-    if(!email || !password) {
+async function createUser(email, password, name, refresh) {
+    if(!email || !password || !name || !refresh) {
         return false;
     }
     try {
         const salt = bcrypt.genSaltSync(parseInt(process.env.SALT));
         const hash = bcrypt.hashSync(password, salt);
         const id = uuid.uuid();
-        let dbinsert = await db('user').insert({
+        let dbinsert = await db(process.env.DB_TABLE).insert({
             id: id,
-            name: email,
+            email: email,
+            name: name,
+            refresh_token: refresh,
             password: hash
         });
         if(dbinsert) {
@@ -34,11 +36,14 @@ async function loginUser(email, password) {
         return false;
     }
     try {
-        const user = await db('user').where('name', email).first();
+        const user = await db(process.env.DB_TABLE).where('email', email).first();
         if(user) {
             const result = bcrypt.compareSync(password, user.password);
             if(result) {
-                return user.id;
+                return {
+                    id: user.id,
+                    refresh: user.refresh_token
+                }
             } else {
                 return false;
             }
