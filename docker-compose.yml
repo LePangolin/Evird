@@ -29,6 +29,20 @@ services:
       - ./UserService/.env
     networks:
       - server_network
+    depends_on:
+      - db_user_service
+    links:
+      - db_user_service
+  db_user_service:
+    container_name: db_user_service
+    image: 'mariadb:latest'
+    volumes:
+      - ./UserService/db/data:/var/lib/mysql
+      - ./UserService/db/sql:/docker-entrypoint-initdb.d
+    env_file:
+      - ./UserService/.env
+    networks:
+      - server_network
 
 networks:
   server_network:
