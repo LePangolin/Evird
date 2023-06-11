@@ -4,6 +4,7 @@ const joi = require('joi');
 // VARIABLES
 const schema = joi.object({
     email: joi.string().email().required(),
+    name: joi.string().required(),
     password: joi.string().required()
 });
 
@@ -14,9 +15,9 @@ const schemaLogin = joi.object({
 
 
 // VALIDATOR
-async function validateInsert(req, res, next) {
+function validateInsert(req, res, next) {
     try {
-        const { error } = await schema.validateAsync(req.body);
+        const { error } = schema.validate(req.body);
         if(error) {
             return res.status(400).send(error.details[0].message);
         }
@@ -26,9 +27,9 @@ async function validateInsert(req, res, next) {
     }
 }
 
-async function validateLogin(req, res, next) {
+function validateLogin(req, res, next) {
     try {
-        const { error } = await schemaLogin.validateAsync(req.body);
+        const { error } = schemaLogin.validate(req.body);
         if(error) {
             return res.status(400).send(error.details[0].message);
         }

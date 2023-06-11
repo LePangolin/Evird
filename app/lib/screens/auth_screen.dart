@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:app/helper/api_helper.dart';
+import 'package:provider/provider.dart';
+import 'package:app/provider/auth_provider.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,6 +14,9 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
 
   bool _loading = false;
+
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +73,16 @@ class _AuthScreenState extends State<AuthScreen> {
                 
               ),
               keyboardType: TextInputType.emailAddress,
+              key: const ValueKey('email'),
+              validator: (value) {
+                if (value!.isEmpty || !value.contains('@')) {
+                  return 'Please enter a valid email address.';
+                }
+                return null;
+              },
+              onChanged: (value){
+                email = value;
+              }
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             TextFormField(
@@ -83,12 +100,44 @@ class _AuthScreenState extends State<AuthScreen> {
 
               ),
               obscureText: true,
+              key: const ValueKey('password'),
+              validator: (value) {
+                if (value!.isEmpty ) {
+                  return 'Please enter a valid password.';
+                }
+                return null;
+              },
+              onChanged: (value){
+                password = value;
+              }
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   _loading = true;
+                  ApiHelper.connection(email, password).then((value){
+                    if(value['error']){
+                      setState(() {
+                        _loading = false;
+                      });
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(value['message']),
+                          backgroundColor: Colors.red,
+                        )
+                      );
+                    }else{
+                      Provider.of<AuthProvider>(context, listen: false).makeConnection(value['token'], value['refreshToken']);
+                      // Navigator.pushReplacementNamed(context, '/home');
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Login success'),
+                          backgroundColor: Colors.green,
+                        )
+                      );
+                    }
+                  });
                 });
               },
               style: ButtonStyle(
