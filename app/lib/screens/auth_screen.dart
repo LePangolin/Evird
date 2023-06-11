@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,6 +11,9 @@ class AuthScreen extends StatefulWidget {
 class _AuthScreenState extends State<AuthScreen> {
 
   bool _loading = false;
+
+  String email = '';
+  String password = '';
 
   @override
   Widget build(BuildContext context) {
@@ -66,6 +70,16 @@ class _AuthScreenState extends State<AuthScreen> {
                 
               ),
               keyboardType: TextInputType.emailAddress,
+              key: const ValueKey('email'),
+              validator: (value) {
+                if (value!.isEmpty || !value.contains('@')) {
+                  return 'Please enter a valid email address.';
+                }
+                return null;
+              },
+              onChanged: (value){
+                email = value;
+              }
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             TextFormField(
@@ -83,12 +97,51 @@ class _AuthScreenState extends State<AuthScreen> {
 
               ),
               obscureText: true,
+              key: const ValueKey('password'),
+              validator: (value) {
+                if (value!.isEmpty ) {
+                  return 'Please enter a valid password.';
+                }
+                return null;
+              },
+              onChanged: (value){
+                password = value;
+              }
             ),
             SizedBox(height: MediaQuery.of(context).size.height * 0.05),
             ElevatedButton(
               onPressed: () {
                 setState(() {
                   _loading = true;
+                  http.post(Uri.parse('https://8bbe-195-83-211-139.ngrok-free.app/user/login'), body: {
+                    'email': email,
+                    'password': password
+                  }).then((value) {
+                    if(value.statusCode >= 200 && value.statusCode < 300){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Login successful'),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }else{
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Login failed'),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                    setState(() {
+                      _loading = false;
+                    });
+                  });
                 });
               },
               style: ButtonStyle(
