@@ -2,7 +2,7 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const bodyParser = require('body-parser');
-
+const axios = require('axios');
 // VARIABLES
 const app = express();
 
@@ -12,11 +12,14 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // ROUTES
+// TODO: CREER UN SERVICE D'UPLOAD DE FICHIER
 app.use("/js", express.static("./public/js"));
 app.use("/css", express.static("./public/style"));
 app.use("/img", express.static("./public/img"));
 app.use("/upload", require("./router/upload_route"));
 app.use("/", require("./router/base_route"));
+
+app.use("/user", require("./router/user_route"));
 
 // LUNCH SERVER
 app.listen(process.env.PORT, () => {
