@@ -23,7 +23,7 @@ void main() {
             cursorColor: Color.fromRGBO(130, 0, 33, 1)
           ),
         ),
-        home: AuthScreen(),
+        home: const AuthScreen(),
       ),
     ),
   );

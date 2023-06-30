@@ -9,9 +9,21 @@ const router = express.Router();
 router.post('/signup', async (req, res) => {
     try {
         let result = await axios.post(process.env.USER_SERVICE_ROUTE + "/user/signup", req.body);
-        res.status(result.status).send({
+        const id = result.data.id;
+        const token = result.data.token;
+        const refresh = result.data.refresh;
+        const name = result.data.name;
+        result = await axios.post(process.env.UPLOAD_SERVICE_ROUTE + "/folder", { 
+            id_creator: id,
+            folderName: name
+        });
+        res.status(result.status).send({ 
             code : result.status,
-            message : result.data
+            message : {
+                id: id,
+                token: token,
+                refresh: refresh,
+            }
         });
     } catch (error) {
         res.status(error.response.status).send({

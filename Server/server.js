@@ -8,17 +8,13 @@ const app = express();
 
 // MIDDLEWARES
 app.use(fileUpload());
-app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json()).use(bodyParser.urlencoded({ extended: true }));
 
-// ROUTES
-// TODO: CREER UN SERVICE D'UPLOAD DE FICHIER
-app.use("/js", express.static("./public/js"));
-app.use("/css", express.static("./public/style"));
-app.use("/img", express.static("./public/img"));
 app.use("/upload", require("./router/upload_route"));
+app.use("/folder", require("./router/folder_route"));
 app.use("/", require("./router/base_route"));
 
+// ROUTES SERVICES
 app.use("/user", require("./router/user_route"));
 
 // LUNCH SERVER

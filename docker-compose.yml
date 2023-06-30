@@ -14,10 +14,12 @@ services:
       - ./Server/.env
     depends_on:
       - user_service
+      - upload_service
     networks:
       - server_network
     links:
       - user_service
+      - upload_service
   user_service:
     container_name: user_service
     image: 'node:alpine'
@@ -41,6 +43,31 @@ services:
       - ./UserService/db/sql:/docker-entrypoint-initdb.d
     env_file:
       - ./UserService/.env
+    networks:
+      - server_network
+  upload_service:
+    container_name: upload_service
+    image: 'node:alpine'
+    working_dir: /app
+    command: "npm run dev"
+    volumes:
+      - ./UploadService:/app
+    env_file:
+      - ./UploadService/.env
+    networks:
+      - server_network
+    depends_on:
+      - db_upload_service
+    links:
+      - db_upload_service
+  db_upload_service:
+    container_name: db_upload_service
+    image: 'mariadb:latest'
+    volumes:
+      - ./UploadService/db/data:/var/lib/mysql
+      - ./UploadService/db/sql:/docker-entrypoint-initdb.d
+    env_file:
+      - ./UploadService/.env
     networks:
       - server_network
 

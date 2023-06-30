@@ -20,6 +20,8 @@ router.post('/signup', validateInsert, async (req, res) => {
         const token = jwt.sign({ id: result }, process.env.JWT_SECRET);
         return res.status(201).send({
             message: 'User created',
+            id: result,
+            name: req.body.name,
             token: token,
             refresh: refresh
         });
@@ -49,6 +51,55 @@ router.post('/login', validateLogin, async (req, res) => {
         return res.status(500).send('User not logged in');
     }
 });
+
+
+router.post('/refresh', async (req, res) => {
+    try {
+        let token = req.headers.authorization.split(' ');
+        if(token[0] != "Bearer") {
+            return res.status(401).send('User not logged in');
+        }
+        if(!token[1]) {
+            return res.status(401).send('User not logged in');
+        }
+        if(result) {
+            token = jwt.sign({ id: result.id }, process.env.JWT_SECRET);
+            return res.status(200).send({
+                message: 'User logged in',
+                token: token,
+                refresh: result.refresh
+            });
+        } else {
+            return res.status(500).send('User not logged in');
+        }
+    } catch (error) {
+        return res.status(500).send('User not logged in');
+    }
+});
+
+router.post('/verify', async (req, res) => {
+    try {
+        const token = req.headers.authorization.split(' ');
+        if(token[0] != "Bearer") {
+            return res.status(401).send('User not logged in');
+        }
+        if(!token[1]) {
+            return res.status(401).send('User not logged in');
+        }
+        const decoded = jwt.verify(token[1], process.env.JWT_SECRET);
+        if(decoded) {
+            return res.status(200).send({
+                message: 'User logged in',
+                id: decoded.id
+            });
+        } else {
+            return res.status(401).send('User not logged in');
+        }
+    } catch (error) {
+        return res.status(500).send('User not logged in');
+    }
+});
+
 
 // EXPORTS
 module.exports = router;

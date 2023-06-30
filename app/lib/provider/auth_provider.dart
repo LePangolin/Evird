@@ -14,8 +14,19 @@ class AuthProvider extends ChangeNotifier{
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('refreshToken', refreshToken);
     }catch(e){
-      print(e);
+      // invoke error
     }
+  }
+
+  Map<String, dynamic> getInfo(){
+    return {
+      'token': token,
+      'refreshToken': refreshToken
+    };
+  }
+
+  void notify(){
+    notifyListeners();
   }
 
 }
