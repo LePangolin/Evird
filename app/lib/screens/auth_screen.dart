@@ -3,6 +3,8 @@ import 'package:app/helper/api_helper.dart';
 import 'package:provider/provider.dart';
 import 'package:app/provider/auth_provider.dart';
 
+import 'folder_screen.dart';
+
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -22,7 +24,7 @@ class _AuthScreenState extends State<AuthScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
+        child: SizedBox(
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: Column(
@@ -35,7 +37,6 @@ class _AuthScreenState extends State<AuthScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image(image: AssetImage('assets/img/charly-lab.png')),
-              
                     ],
                   ),              
                 ),
@@ -130,11 +131,9 @@ class _AuthScreenState extends State<AuthScreen> {
                     }else{
                       Provider.of<AuthProvider>(context, listen: false).makeConnection(value['token'], value['refreshToken']);
                       // Navigator.pushReplacementNamed(context, '/home');
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Login success'),
-                          backgroundColor: Colors.green,
-                        )
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const FolderScreen()),
                       );
                     }
                   });

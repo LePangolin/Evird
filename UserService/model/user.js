@@ -2,6 +2,7 @@
 const db = require('../helper/database');
 const uuid = require('uuidv4');
 const bcrypt = require('bcrypt');
+const { createRefreshToken } = require('../helper/refreshtoken');
 
 
 // INTERACT WITH DATABASE
@@ -56,8 +57,32 @@ async function loginUser(email, password) {
     }
 }
 
+async function refreshToken(refresh) {
+    if(!refresh) {
+        return false;
+    }
+    try {
+        const user = await db(process.env.DB_TABLE).where('refresh_token', refresh).first();
+        if(user) {
+            const newRefresh = createRefreshToken();
+            await db(process.env.DB_TABLE).where('refresh_token', refresh).update('refresh_token', newRefresh);
+            return {
+                id: user.id,
+                refresh: newRefresh
+            }
+        } else {
+            return false;
+        }
+    } catch(error) {
+        console.log(error);
+        return false;
+    }
+}
+
+
 
 module.exports = {
     createUser,
-    loginUser
+    loginUser,
+    refreshToken
 }

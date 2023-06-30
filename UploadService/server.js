@@ -12,6 +12,8 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // ROUTES
+app.use("/folder", require('./router/folder_route'));
+app.use("/upload", require('./router/upload_route'));
 
 // LAUNCH
 app.listen(process.env.PORT || 3000, () => {
