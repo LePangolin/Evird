@@ -70,7 +70,8 @@ class ApiHelper{
 
   static Future<Map<String,dynamic>> uploadFile(idDossier, path, token) async {
     var request = http.MultipartRequest('POST', Uri.parse('${dotenv.env['BASE_URL']}/upload/$idDossier'));
-    var file = await http.MultipartFile.fromPath('file', path);
+    File tmp = File(path);
+    var file = await http.MultipartFile.fromPath('file', tmp.path);
     request.headers.addAll({
       HttpHeaders.authorizationHeader:  "Bearer $token"
     });
