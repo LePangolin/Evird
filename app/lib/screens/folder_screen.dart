@@ -32,32 +32,41 @@ class _FolderScreenState extends State<FolderScreen> {
                       title: Center(
                           child: Text(snapshot.data!['message']["name"]))),
                   body: ListView.builder(
+                    physics: const BouncingScrollPhysics(),
                     itemCount: snapshot.data!['message']["files"]["number"],
                     itemBuilder: (context, index) {
-                      return ListTile(
-                          title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Icon(getIcon(snapshot.data!['message']["files"]
-                              ["data"][index]["type"])),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.6,
-                            child: Text(
-                              snapshot.data!['message']["files"]["data"][index]
-                                  ["name"],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            child: Text(
-                              snapshot.data!['message']["files"]["data"][index]
-                                  ["created_at"],
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ),
-                        ],
-                      ));
+                      // order by created_at
+                      List<dynamic> files = snapshot.data!['message']["files"]["data"];
+                      files.sort((a,b) => a['created_at'].compareTo(b['created_at']));
+                      return Card(
+                        child: ListTile(
+                            // elevation and shape are properties of ListTileStyle
+                              
+                            style: ListTileStyle.drawer,
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Icon(getIcon(snapshot.data!['message']["files"]
+                                    ["data"][index]["type"])),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.6,
+                                  child: Text(
+                                    snapshot.data!['message']["files"]["data"]
+                                        [index]["name"],
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width * 0.2,
+                                  child: Text(
+                                    snapshot.data!['message']["files"]["data"]
+                                        [index]["created_at"],
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            )),
+                      );
                     },
                   ),
                   floatingActionButton: FloatingActionButton(
@@ -73,8 +82,13 @@ class _FolderScreenState extends State<FolderScreen> {
                   ));
             }
           } else {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              color: Colors.white,
+              child: const Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           }
         },
@@ -123,7 +137,7 @@ class _FolderScreenState extends State<FolderScreen> {
         return Icons.folder_zip;
       case '7z':
         return Icons.folder_zip;
-      case 'vnd.android.package-archive' :
+      case 'vnd.android.package-archive':
         return Icons.android;
       case "stl":
         return Icons.view_in_ar;

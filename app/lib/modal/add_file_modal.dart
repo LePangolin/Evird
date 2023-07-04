@@ -16,6 +16,10 @@ class AddFile extends StatefulWidget {
 }
 
 class _AddFileState extends State<AddFile> {
+  File file = File('');
+  String newName = '';
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -34,35 +38,79 @@ class _AddFileState extends State<AddFile> {
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () async {
-                  FilePickerResult? result =
-                      await FilePicker.platform.pickFiles();
-                  if (result != null) {
-                    File file = File(result.files.single.path!);
-                    Map<String, dynamic> response = await ApiHelper.uploadFile(
-                        widget.idDossier,
-                        file.path,
-                        Provider.of<AuthProvider>(context, listen: false)
-                            .getInfo()['token']);
-                    if (response['error']) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text(response['message'])));
-                    } else {
-                      // Faire disparaitre la modal
-                      Navigator.of(context).pop();
-                      // Notify listeners
-                      Provider.of<AuthProvider>(context, listen: false).notify();
-                    }
-                  }
-                },
-                child: const Text("Choisir un fichier"),
-              )
-            ],
+            children: getChildren(),
           )
         ],
       ),
     );
+  }
+
+  List<Widget> getChildren() {
+    List<Widget> children = [];
+    if (file.path == '') {
+      return [
+        ElevatedButton(
+          onPressed: () async {
+            FilePickerResult? result = await FilePicker.platform.pickFiles();
+            if (result != null) {
+              setState(() {
+                file = File(result.files.single.path!);
+              });
+            }
+          },
+          child: const Text("Choisir un fichier"),
+        )
+      ];
+    } else if(loading){
+      return [
+        const CircularProgressIndicator()
+      ];
+    } else {
+      String extension = file.path.split('.').last;
+      newName = file.path.split('/').last;
+      return [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.60,
+          child: Form(
+            child: Column(
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: "Nom du fichier",
+                  ),
+                  key: const ValueKey("name"),
+                  initialValue: newName,
+                  // disable the form field
+                  enabled: false,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                ),
+                ElevatedButton(onPressed: () {
+                    setState(() {
+                      loading = true;
+                      ApiHelper.uploadFile(
+                        widget.idDossier,
+                        file.path,
+                        Provider.of<AuthProvider>(context, listen: false).getInfo()['token']).then((response) =>{
+                              if (response['error']) {
+                                ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(response['message'])))
+                              } else {
+                                // Faire disparaitre la modal
+                                Navigator.of(context).pop(),
+                                // Notify listeners
+                                Provider.of<AuthProvider>(context, listen: false).notify()
+                              }
+                            });
+                    });
+
+                 
+                }, child: const Text("Envoyer le fichier")),
+              ],
+            ),
+          ),
+        )
+      ];
+    }
   }
 }
