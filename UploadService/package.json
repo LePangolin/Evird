@@ -8,8 +8,7 @@
         "uuidv4": "^6.0.7",
         "joi" :"17.9.2",
         "mysql": "^2.18.1",
-        "mv": "^2.1.1",
-        "formidable": "1.2.2"
+        "mv": "^2.1.1"
     },
     "scripts": {
         "dev" : "npm install && nodemon --legacy-watch server.js",
