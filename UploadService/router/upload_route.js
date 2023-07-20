@@ -45,5 +45,18 @@ router.post("/:id", (req, res) => {
   }
 });
 
+
+router.get("/folder/:idFolder/file/:idFile", async (req, res) => {
+  try {
+    const filePath = path.join("./uploads/", req.params.idFolder, "/", req.params.idFile);
+    const data = fs.readFileSync(filePath);
+    const dataBase64 = Buffer.from(data).toString("base64");
+    return res.status(200).send(dataBase64);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 // EXPORTS
 module.exports = router;

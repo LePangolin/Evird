@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class FileInfo extends StatefulWidget {
   final Map<String, dynamic> info;
@@ -123,7 +125,13 @@ class _FileInfoState extends State<FileInfo> {
                 width: MediaQuery.of(context).size.width * 0.2,
               ),
               ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    await launch("${dotenv.env['BASE_URL']}/upload/folder/${widget.info['id_dossier']}/file/${widget.info['name']}",
+                      headers: {
+                        'ngrok-skip-browser-warning': 'true'
+                      }
+                    );
+                  },
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                         RoundedRectangleBorder(
