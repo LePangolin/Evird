@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:app/helper/api_helper.dart';
 import 'package:app/modal/add_file_modal.dart';
 
+import '../modal/file_info_modal.dart';
+
 class FolderScreen extends StatefulWidget {
   const FolderScreen({super.key});
 
@@ -45,20 +47,20 @@ class _FolderScreenState extends State<FolderScreen> {
 
                 files.removeWhere((element) => remove.contains(element));
               }
-              if(filterSelected.isNotEmpty){
+              if (filterSelected.isNotEmpty) {
                 List<dynamic> remove = [];
                 for (var element in files) {
                   bool find = false;
                   for (var filter in filterSelected) {
                     String type = filter;
-                    if(filter == "apk"){
+                    if (filter == "apk") {
                       type = "vnd.android.package-archive";
                     }
-                    if(element['type'].toString().split("/")[1] == type){
+                    if (element['type'].toString().split("/")[1] == type) {
                       find = true;
                     }
                   }
-                  if(!find){
+                  if (!find) {
                     remove.add(element);
                   }
                 }
@@ -73,60 +75,98 @@ class _FolderScreenState extends State<FolderScreen> {
                         searchWidget(),
                         IconButton(
                             onPressed: () {
-                              showDialog(context: context, builder: (context) =>  AlertDialog(
-                                content: StatefulBuilder(
-                                  builder: (context, setState) =>  SingleChildScrollView(
-                                    child: Column(
-                                      children:  [
-                                        const Center(
-                                          child: Text("Filtrer par type de fichier"),
-                                        ),
-                                        SizedBox(
-                                          height: MediaQuery.of(context).size.height * 0.02,
-                                        ),
-                                        SizedBox(
-                                          height: MediaQuery.of(context).size.height * 0.5,
-                                          width: MediaQuery.of(context).size.width * 0.8,
-                                          child: ListView.builder(
-                                            itemCount: filter.length,
-                                            itemBuilder: (context, index) {
-                                              return Card(
-                                                child: CheckboxListTile(
-                                                  value: filterSelected.contains(filter[index]),
-                                                  onChanged: (value) {
-                                                    setState(() {
-                                                      if(value!){
-                                                        filterSelected.add(filter[index]);
-                                                      }else{
-                                                        filterSelected.remove(filter[index]);
-                                                      }
-                                                    });
+                              showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                          content: StatefulBuilder(
+                                        builder: (context, setState) =>
+                                            SingleChildScrollView(
+                                          child: Column(
+                                            children: [
+                                              const Center(
+                                                child: Text(
+                                                    "Filtrer par type de fichier"),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.02,
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.5,
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.8,
+                                                child: ListView.builder(
+                                                  itemCount: filter.length,
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    return Card(
+                                                      child: CheckboxListTile(
+                                                        value: filterSelected
+                                                            .contains(
+                                                                filter[index]),
+                                                        onChanged: (value) {
+                                                          setState(() {
+                                                            if (value!) {
+                                                              filterSelected
+                                                                  .add(filter[
+                                                                      index]);
+                                                            } else {
+                                                              filterSelected
+                                                                  .remove(filter[
+                                                                      index]);
+                                                            }
+                                                          });
+                                                        },
+                                                        title:
+                                                            Text(filter[index]),
+                                                      ),
+                                                    );
                                                   },
-                                                  title: Text(filter[index]),
                                                 ),
-                                              );
-                                            },
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.02,
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                  Provider.of<AuthProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .notify();
+                                                },
+                                                style: ButtonStyle(
+                                                  backgroundColor:
+                                                      MaterialStateProperty.all<
+                                                              Color>(
+                                                          const Color.fromRGBO(
+                                                              130, 0, 33, 1)),
+                                                  minimumSize:
+                                                      MaterialStateProperty
+                                                          .all<Size>(Size(
+                                                              MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .width *
+                                                                  0.8,
+                                                              50)),
+                                                ),
+                                                child: const Text("Filtrer"),
+                                              )
+                                            ],
                                           ),
                                         ),
-                                        SizedBox(
-                                          height: MediaQuery.of(context).size.height * 0.02,
-                                        ),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.pop(context);
-                                            Provider.of<AuthProvider>(context, listen: false).notify();
-                                          },
-                                          style: ButtonStyle(
-                                            backgroundColor: MaterialStateProperty.all<Color>(const Color.fromRGBO(130, 0, 33, 1)),
-                                            minimumSize: MaterialStateProperty.all<Size>(Size(MediaQuery.of(context).size.width * 0.8, 50)),
-                                          ),
-                                          child: const Text("Filtrer"),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ));
+                                      )));
                             },
                             icon: const Icon(Icons.filter_alt_outlined)),
                       ],
@@ -138,7 +178,14 @@ class _FolderScreenState extends State<FolderScreen> {
                       return Card(
                         child: ListTile(
                             // elevation and shape are properties of ListTileStyle
-
+                            onTap: () => {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            content:
+                                                FileInfo(info: files[index]),
+                                          ))
+                                },
                             style: ListTileStyle.drawer,
                             title: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -156,7 +203,7 @@ class _FolderScreenState extends State<FolderScreen> {
                                   width:
                                       MediaQuery.of(context).size.width * 0.2,
                                   child: Text(
-                                    files[index]["created_at"],
+                                    "${files[index]["updated_at"].substring(8, 10)}/${files[index]["updated_at"].substring(5, 7)}/${files[index]["updated_at"].substring(0, 4)} à ${files[index]["updated_at"].substring(11, 13)}h${files[index]["updated_at"].substring(14, 16)}",
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
@@ -166,7 +213,7 @@ class _FolderScreenState extends State<FolderScreen> {
                     },
                   ),
                   floatingActionButton: FloatingActionButton(
-                    backgroundColor: Color.fromRGBO(130, 0, 33, 1),
+                    backgroundColor: const Color.fromRGBO(130, 0, 33, 1),
                     onPressed: () {
                       showDialog(
                           context: context,

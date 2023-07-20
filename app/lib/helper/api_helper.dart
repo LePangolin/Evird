@@ -13,8 +13,13 @@ class ApiHelper{
         body: {
           'email': email,
           'password': password
+        },
+        headers: {
+          HttpHeaders.contentTypeHeader: "application/x-www-form-urlencoded",
+          "ngrok-skip-browser-warning": "fjkbejkfhzli"
         }
       );
+
       if(response.statusCode >= 200 && response.statusCode < 300){
         String data = response.body;
         Map<String,dynamic> json = jsonDecode(data);
@@ -32,6 +37,7 @@ class ApiHelper{
         };
       }
     }catch(e){
+      inspect(e);
       return {
         'error': true,
         'message': 'Something went wrong'
@@ -43,7 +49,8 @@ class ApiHelper{
     try{  
       http.Response response = await http.get(Uri.parse('${dotenv.env['BASE_URL']}/folder/user/main'),
       headers: {
-        HttpHeaders.authorizationHeader: "Bearer $token"
+        HttpHeaders.authorizationHeader: "Bearer $token",
+        "ngrok-skip-browser-warning": "fjkbejkfhzli"
       });
       if(response.statusCode >= 200 && response.statusCode < 300){
         String data = response.body;
@@ -73,7 +80,8 @@ class ApiHelper{
     File tmp = File(path);
     var file = await http.MultipartFile.fromPath('file', tmp.path);
     request.headers.addAll({
-      HttpHeaders.authorizationHeader:  "Bearer $token"
+      HttpHeaders.authorizationHeader:  "Bearer $token",
+      "ngrok-skip-browser-warning": "fjkbejkfhzli"
     });
     request.files.add(file);
     var response = await request.send();
